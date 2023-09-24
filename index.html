@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Round</title>
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="apple-touch-icon" href="favicon.ico" />
+		<link rel="apple-touch-icon-precomposed" href="favicon.ico" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="viewport" content="user-scalable=no, width=device-width" />
+		<meta name="viewport" content="minimum-scale=1.0,width=device-width,maximum-scale=1,user-scalable=no" />
+		<style>
+			body {margin:0 auto;padding:0;font-family:arial;text-align:center}
+			fieldset {font-size:7vw;border:0;outline:0}
+			section {display:inline-grid;grid-template-columns:auto auto;grid-gap:8vw}
+			div {border:solid 1px;font-size:4vw;padding:3vw;width:30vw;cursor:pointer}
+			@media (max-width: 1000px) {
+				fieldset {margin:10vw auto}
+			}
+		</style>
+	</head>
+	<body>
+		<fieldset>81</fieldset>
+		<section>
+			<div>Round Up</div>
+			<div>Round Down</div>
+		</section>
+	</body>
+</html>
+<script>
+	var timer = 0;
+	var fs = '';
+	var congratulation = () => {
+		timer = setTimeout(function(){
+			document.body.style.backgroundColor = document.body.style.backgroundColor=="white"?"whitesmoke":"white";
+			congratulation();
+		},200);
+	}
+	var lastDigit = (num) => num % 10;
+	var roundUp = ['5','6','7','8','9'];
+	var roundDown = ['0','1','2','3','4'];
+	var speak = (txt) => {
+		var word = new SpeechSynthesisUtterance(txt)
+		word.lang = 'en';
+		word.rate = 1;
+		speechSynthesis.speak(word);
+	};
+	var blinking = () => {
+		congratulation();
+		speak('Congratulation');
+		setTimeout("start()",2000);
+	}
+	var shuffle = (array) => {
+		let currentIndex = array.length,  randomIndex;
+		while (currentIndex > 0) {
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex--;
+			[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+		}
+		return array;
+	}
+	var start = () => {
+		clearTimeout(timer);
+		document.body.style.backgroundColor = "white";
+		fs = document.getElementsByTagName('fieldset')[0];
+		fs.innerText = shuffle([...Array(99).keys()])[0];
+	}
+	[...document.getElementsByTagName('div')].forEach(dv=>{
+		dv.addEventListener('click',()=>{
+			dv.style.backgroundColor = 'grey';
+			setTimeout(()=>{
+				dv.style.backgroundColor = 'white';
+			},100);
+			if(dv.innerText=='Round Up'){
+				if(roundUp.indexOf(lastDigit(fs.innerText).toString())>-1) {
+					blinking();
+				}
+				else {
+					speak("Not correct!");
+				}
+			}
+			else {
+				if(roundDown.indexOf(lastDigit(fs.innerText).toString())>-1) {
+					blinking();
+				}
+				else {
+					speak("Not correct!");
+				}
+			}
+		});
+			
+		});
+	start();
+</script>
